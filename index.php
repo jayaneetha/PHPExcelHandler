@@ -2,12 +2,19 @@
 include './PHPExcelHandler.php';
 $objPHPExcelHandler = new PHPExcelHandler();
 $cRow;
-$pageSetupArray = array(
-    'orientation' => PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE,
-    'paperSize' => PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4,
-    'fitToHeight' => 1,
-    'FirstPageNumber' => 1
-        );
+    $pageSetupArray = array(
+        'orientation' => PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE,
+        'paperSize' => PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4,
+        'fitToHeight' => 1,
+        'fitToWidth' => 1,
+        'FirstPageNumber' => 1,
+        'pageMargins' => array(
+            'top' => 1,
+            'right' => 1,
+            'bottom' => 1,
+            'left' => 1,
+        )
+    );
 $objPHPExcelHandler->setPageSetup($pageSetupArray);
 
 $metadataArray = array(

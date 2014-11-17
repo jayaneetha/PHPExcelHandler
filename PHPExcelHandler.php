@@ -11,7 +11,7 @@
  *
  * @author Thejan
  */
-include './PHPExcel.php';
+include 'PHPExcel.php';
 
 class PHPExcelHandler {
 
@@ -27,7 +27,7 @@ class PHPExcelHandler {
     /**
      * Set Page Setup
 
-     *'orientation' => PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE,
+     * 'orientation' => PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE,
 
      *  'paperSize' => PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4,
 
@@ -48,8 +48,28 @@ class PHPExcelHandler {
         if (array_key_exists('fitToHeight', $pageSetupArray))
             $this->objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight($pageSetupArray['fitToHeight']);
 
+        if (array_key_exists('fitToWidth', $pageSetupArray))
+            $this->objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth($pageSetupArray['fitToWidth']);
+
         if (array_key_exists('FirstPageNumber', $pageSetupArray))
             $this->objPHPExcel->getActiveSheet()->getPageSetup()->setFirstPageNumber($pageSetupArray['FirstPageNumber']);
+
+        if (array_key_exists("pageMargins", $pageSetupArray))
+            $this->setPageMargins($pageSetupArray['pageMargins']);
+    }
+
+    public function setPageMargins($pageMarginArray) {
+        if (array_key_exists("top", $pageMarginArray))
+            $this->objPHPExcel->getActiveSheet()->getPageMargins()->setTop($pageMarginArray['top']);
+
+        if (array_key_exists("right", $pageMarginArray))
+            $this->objPHPExcel->getActiveSheet()->getPageMargins()->setRight($pageMarginArray['right']);
+
+        if (array_key_exists("bottom", $pageMarginArray))
+            $this->objPHPExcel->getActiveSheet()->getPageMargins()->setBottom($pageMarginArray['bottom']);
+
+        if (array_key_exists("left", $pageMarginArray))
+            $this->objPHPExcel->getActiveSheet()->getPageMargins()->setLeft($pageMarginArray['left']);
     }
 
     /**
@@ -57,19 +77,19 @@ class PHPExcelHandler {
 
      * 'creator' => "Creator",
 
-    'lastModifiedBy' => "Last Modified",
+      'lastModifiedBy' => "Last Modified",
 
-    'title' => "Title",
+      'title' => "Title",
 
-    'subject' => "Subject",
+      'subject' => "Subject",
 
-    'description' => "Description",
+      'description' => "Description",
 
-    'keywords' => "Keywords test",
+      'keywords' => "Keywords test",
 
-    'catagory' => "Catagory",
+      'catagory' => "Catagory",
 
-    'company' => "Company"
+      'company' => "Company"
 
      * @param type $metadataArray
      */
@@ -110,7 +130,11 @@ class PHPExcelHandler {
 
     public function setColumnWidth($columnWidthArray) {
         foreach ($columnWidthArray as $key => $value) {
-            $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($key)->setWidth($value);
+            if ($value == 0) {
+                $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($key)->setAutoSize(true);
+            } else {
+                $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($key)->setWidth($value);
+            }
         }
     }
 
@@ -145,6 +169,27 @@ class PHPExcelHandler {
     public function download($filename = NULL) {
         $filename = $this->save($filename);
         header("Location:" . $filename);
+    }
+
+    public function mergeCells($range) {
+        $this->objPHPExcel->getActiveSheet()->mergeCells($range);
+    }
+
+    public function mergerCellsByColumnAndRow($range) {
+        $this->objPHPExcel->getActiveSheet()->mergeCellsByColumnAndRow($range[0], $range[1], $range[2], $range[3]);
+    }
+
+    /**
+     * 
+     * @param int $rowNumber
+     * @param bool $hide
+     */
+    public function hideRow($rowNumber, $hide = true) {
+        $this->objPHPExcel->getActiveSheet()->getRowDimension($rowNumber)->setVisible(!$hide);
+    }
+
+    public function hideColumn($columnNumber, $hide = true) {
+        $this->objPHPExcel->getActiveSheet()->getColumnDimension($columnNumber)->setVisible(!$hide);
     }
 
 }
